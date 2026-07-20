@@ -92,6 +92,11 @@ initialized ONLY in `control.lua on_init`; modules never add top-level keys.
 - Sounds: only use verified paths (`utility/console_message`,
   `utility/alert_destroyed`, `utility/game_won`, `utility/game_lost`).
 - No emoji in in-game captions (font gaps); use rich text `[item=bw-emerald]`.
+- **Other mods run inside our scenario** and freeplay-assuming ones crash (Any
+  Planet Start died in on_player_created). Play via the "Bed Wars only"
+  profile: `%APPDATA%\Factorio\bedwars-mods` (junction + minimal mod-list) +
+  the desktop shortcut "Factorio - Bed Wars" (`--mod-directory` launch). MP
+  also requires both players' mod lists to match exactly.
 
 ## Status
 

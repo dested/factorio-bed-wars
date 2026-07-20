@@ -79,6 +79,17 @@ timer pressure.*
 
 Requires **Factorio 2.1+**, base game only — no DLC needed.
 
+> [!IMPORTANT]
+> **Play with ONLY Bed Wars enabled.** Every enabled mod's scripts run inside a
+> scenario, and mods that assume a normal freeplay world (e.g. *Any Planet
+> Start* and other planet mods) can crash the moment a player joins. Also,
+> Factorio multiplayer requires both players to have **identical** mod lists —
+> so a minimal list is what you want anyway.
+>
+> Easiest way: a second mods folder with just this mod in it, and a shortcut
+> that launches `factorio.exe --mod-directory "<that folder>"`. Your normal
+> modpack stays untouched for regular play.
+
 ## 🗺️ The map
 
 ```
