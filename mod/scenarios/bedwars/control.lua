@@ -86,6 +86,13 @@ script.on_event(defines.events.on_player_mined_entity, function(e)
   Combat.on_player_mined_entity(e)
 end)
 
+script.on_event(defines.events.on_entity_died, function(e)
+  Combat.on_entity_died(e)
+end, {
+  { filter = "name", name = "bw-bed-west" },
+  { filter = "name", name = "bw-bed-east" },
+})
+
 script.on_event(defines.events.on_player_died, function(e)
   Combat.on_player_died(e)
 end)

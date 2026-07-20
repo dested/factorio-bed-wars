@@ -40,9 +40,12 @@ Last team breathing wins.
 4. **Upgrade** — the <img src="mod/graphics/bw-market-upgrades-icon.png" width="20"> **Team Upgrades**
    stall sells permanent buffs: Forge tiers, Sharpened Rounds, Swift Boots,
    a Healing Pool around your bed, an instant Bed Fortress.
-5. **Break** — the enemy bed can't be shot (walls actually matter!). You must
-   stand next to it and channel a ~3-second break while their turrets chew on
-   you.
+5. **Break** — kill the enemy bed your way: hand-mine it (~3 s channel — the
+   fastest, but you're standing in their base), shoot it (armored, slow),
+   grenade it, ram it with the car, or melt it with the flamethrower (no fire
+   resistance — the emerald-tier bed-melter). Defender turrets never target
+   beds, so a *player* always has to do the deed — and your own splash damage
+   can't kill your own bed.
 6. **Win** — bed down, defenders dead → victory fireworks → **REMATCH** button
    resets the entire map in seconds.
 

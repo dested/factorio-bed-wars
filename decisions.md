@@ -42,3 +42,14 @@ on mid (fights the PvP focus; water map makes pathing weird).
 ## 2026-07-20 — All tuning in config.lua; modules never hardcode numbers
 **Why:** one file to rebalance the whole game (prices, rates, geometry,
 difficulty multipliers) — safe for non-programmers to tweak.
+
+## 2026-07-20 — Bed is damageable + minable, neutral force (supersedes "indestructible but enemy-hand-minable")
+**Why:** two playtest findings. (1) Players can NEVER hand-mine enemy-force
+entities, so team-force beds were unbreakable — beds are now neutral force
+(ownership lives in the prototype name). (2) Weapons-on-bed is more fun:
+1000 HP with resistances (bullets weakened, explosions decent, fire unresisted,
+impact halved) makes guns/grenades/flamethrower/car all viable while the 3 s
+mining channel stays fastest. Turrets still ignore beds (is_military_target
+false); own-team kills/mines trigger instant rebuild.
+**Rejected:** keeping full indestructibility (less fun, and the wall-sniping
+concern is tempered by bullet resistance + turret immunity).

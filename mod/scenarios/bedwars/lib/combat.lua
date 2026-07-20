@@ -17,32 +17,66 @@ local function bed_key_of_name(name)
   return nil
 end
 
+-- Neutral force: players can never hand-mine enemy-force entities (see teams.lua).
+local function rebuild_bed(bed_key, pos)
+  local surface = game.surfaces[Config.SURFACE]
+  local bed = surface.create_entity{ name = Config.BED_NAMES[bed_key], position = pos, force = "neutral" }
+  storage.bw.teams[bed_key].bed = bed
+  return bed
+end
+
+local function bed_broken(bed_key, breaker_text)
+  local team = storage.bw.teams[bed_key]
+  team.bed_alive = false
+  team.bed = nil
+  Util.announce(Config.TEAMS[bed_key].display .. " bed DESTROYED by " .. breaker_text .. "! "
+    .. Config.TEAMS[bed_key].display .. " can no longer respawn!",
+    { r = 1, g = 0.3, b = 0.3 }, "utility/alert_destroyed")
+  M.check_victory()
+end
+
 function M.on_player_mined_entity(e)
   local name = e.entity and e.entity.valid and e.entity.name
   if not name then return end
   local bed_key = bed_key_of_name(name)
-  if not bed_key then return end
+  if not bed_key or storage.bw.state ~= "active" then return end
   local player = game.get_player(e.player_index)
   local my = Util.team_key_of_player(player)
-  local team = storage.bw.teams[bed_key]
 
   if my == bed_key then
-    -- Rebuild your own bed: you cannot break it. Position captured before event ends.
-    local pos = e.entity.position
-    local surface = game.surfaces[Config.SURFACE]
-    local bed = surface.create_entity{ name = name, position = pos, force = team.force_name }
-    bed.destructible = false
-    team.bed = bed
+    rebuild_bed(bed_key, e.entity.position)
     Util.fly(player, "You can't break your own bed!", { r = 1, g = 0.4, b = 0.4 })
     return
   end
+  bed_broken(bed_key, player.name)
+end
 
-  team.bed_alive = false
-  team.bed = nil
-  Util.announce(Config.TEAMS[bed_key].display .. " bed DESTROYED by " .. player.name .. "! "
-    .. Config.TEAMS[bed_key].display .. " can no longer respawn!",
-    { r = 1, g = 0.3, b = 0.3 }, "utility/alert_destroyed")
-  M.check_victory()
+-- Beds can also be shot/bombed/burned to death (script destroy() does not fire this).
+function M.on_entity_died(e)
+  local name = e.entity and e.entity.valid and e.entity.name
+  if not name then return end
+  local bed_key = bed_key_of_name(name)
+  if not bed_key or storage.bw.state ~= "active" then return end
+  local team_force = storage.bw.teams[bed_key].force_name
+
+  if e.force and e.force.valid and e.force.name == team_force then
+    -- Own team's stray damage killed their own bed: rebuild, no free suicides.
+    rebuild_bed(bed_key, e.entity.position)
+    game.forces[team_force].print("Your own attack hit your bed - it was rebuilt. Careful!",
+      { color = { r = 1, g = 0.6, b = 0.3 } })
+    return
+  end
+
+  local breaker = "an attack"
+  local cause = e.cause
+  if cause and cause.valid then
+    if cause.type == "character" and cause.player then
+      breaker = cause.player.name
+    else
+      breaker = "[entity=" .. cause.name .. "]"
+    end
+  end
+  bed_broken(bed_key, breaker)
 end
 
 function M.on_player_died(e)
@@ -166,10 +200,7 @@ function M.sudden_death()
   for _, key in pairs(Config.TEAM_ORDER) do
     local team = storage.bw.teams[key]
     if team.bed_alive then
-      if team.bed and team.bed.valid then
-        team.bed.destructible = true
-        team.bed.destroy()
-      end
+      if team.bed and team.bed.valid then team.bed.destroy() end
       team.bed_alive = false
       team.bed = nil
     end

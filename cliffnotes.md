@@ -58,9 +58,11 @@ verify.md / updates.md / decisions.md / ui.md   ← the rest of the kit
 4. `on_nth_tick(10)` generators drop items on the ground (walk to collect);
    `on_nth_tick(30)` HUD, heal aura, escalation clock (Emerald II/III, sudden
    death, draw).
-5. Bed = `bw-bed-*`: indestructible (`destructible=false`, turret-proof via
-   `is_military_target=false`) but **hand-minable by the enemy** (3 s channel).
-   Mining your own bed instantly rebuilds it.
+5. Bed = `bw-bed-*`: **neutral force** (players can't mine enemy-force
+   entities), 1000 HP with resistances (bullets weak, fire strong), turret-proof
+   via `is_military_target=false`. Broken by hand-mining (3 s, fastest) or
+   player damage (`on_entity_died` w/ name filters). Own-team mining or
+   own-team splash kill → instant rebuild + scold.
 6. Death: bed alive → auto-respawn (8/10/15 s by difficulty); bed dead →
    eliminated → spectator. Team all-eliminated → victory GUI + fireworks +
    REMATCH button (full deterministic reset back to lobby).

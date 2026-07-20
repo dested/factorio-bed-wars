@@ -13,8 +13,16 @@ local function bed(name, sprite, icon, color)
     name = name,
     icon = icon,
     icon_size = 64,
-    max_health = 500,
+    max_health = 1000,
     is_military_target = false,
+    -- Bullets are resisted (armored bed), explosions land solid chunks, fire is
+    -- unresisted (flamethrower = bed-melter), impact halved so car rams hurt
+    -- without one-shotting. Hand-mining (3 s) stays the fastest break.
+    resistances = {
+      { type = "physical", decrease = 3, percent = 30 },
+      { type = "explosion", percent = 20 },
+      { type = "impact", percent = 50 },
+    },
     collision_box = { { -0.9, -0.9 }, { 0.9, 0.9 } },
     selection_box = { { -1, -1 }, { 1, 1 } },
     minable = { mining_time = 3, results = {} },

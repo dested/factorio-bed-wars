@@ -50,11 +50,12 @@ function M.setup_islands(surface)
       end
     end
 
-    -- Bed: indestructible, but left minable so the enemy can channel-break it.
+    -- Bed: damageable AND minable. Force must be NEUTRAL: players can never
+    -- mine enemy-force entities; ownership is carried by the prototype name
+    -- (bw-bed-west/east), not the force.
     local bed_pos = Util.team_pos(key, F.bed)
     clear_at(bed_pos)
-    local bed = surface.create_entity{ name = Config.BED_NAMES[key], position = bed_pos, force = team.force_name }
-    bed.destructible = false
+    local bed = surface.create_entity{ name = Config.BED_NAMES[key], position = bed_pos, force = "neutral" }
     team.bed = bed
     team.bed_alive = true
 
