@@ -1,0 +1,9 @@
+{
+  "name": "bed-wars",
+  "version": "1.0.0",
+  "title": "Bed Wars",
+  "author": "Sal & son",
+  "description": "Minecraft Bed Wars as a Factorio scenario: two islands, resource generators, shops, and a bed to defend. Start via New Game > Bed Wars > bedwars.",
+  "factorio_version": "2.1",
+  "dependencies": ["base >= 2.1"]
+}
