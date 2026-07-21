@@ -8,6 +8,7 @@ local Shop = require("__bed-wars__/scenarios/bedwars/lib/shop")
 local Upgrades = require("__bed-wars__/scenarios/bedwars/lib/upgrades")
 local Combat = require("__bed-wars__/scenarios/bedwars/lib/combat")
 local Hud = require("__bed-wars__/scenarios/bedwars/lib/hud")
+local AI = require("__bed-wars__/scenarios/bedwars/lib/ai")
 
 script.on_init(function()
   storage.bw = {
@@ -24,6 +25,7 @@ script.on_init(function()
     teams = {},
     gens = {},
     rng = game.create_random_generator(),
+    ai = AI.new_state("rival"),
   }
   for _, key in pairs(Config.TEAM_ORDER) do
     storage.bw.teams[key] = {
@@ -44,6 +46,14 @@ script.on_init(function()
   for _, key in pairs(Config.TEAM_ORDER) do
     Upgrades.refresh_offers(key)
     game.forces[Config.TEAMS[key].force_name].chart_all(surface)
+  end
+end)
+
+-- Existing scenario saves from pre-AI versions get the new state without a
+-- forced rematch or top-level schema error.
+script.on_configuration_changed(function()
+  if storage.bw and not storage.bw.ai then
+    storage.bw.ai = AI.new_state("rival")
   end
 end)
 
@@ -88,9 +98,11 @@ end)
 
 script.on_event(defines.events.on_entity_died, function(e)
   Combat.on_entity_died(e)
+  if AI.on_entity_died(e) then Combat.check_victory() end
 end, {
   { filter = "name", name = "bw-bed-west" },
   { filter = "name", name = "bw-bed-east" },
+  { filter = "type", type = "character" },
 })
 
 script.on_event(defines.events.on_player_died, function(e)
@@ -103,6 +115,10 @@ end)
 
 script.on_nth_tick(Config.GEN_TICK, function()
   Generators.tick()
+end)
+
+script.on_nth_tick(Config.AI_TICK, function()
+  AI.tick()
 end)
 
 script.on_nth_tick(Config.HUD_UPDATE_TICKS, function()

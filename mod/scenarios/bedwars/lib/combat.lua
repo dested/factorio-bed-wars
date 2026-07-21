@@ -8,6 +8,7 @@ local Shop = require("__bed-wars__/scenarios/bedwars/lib/shop")
 local Upgrades = require("__bed-wars__/scenarios/bedwars/lib/upgrades")
 local Hud = require("__bed-wars__/scenarios/bedwars/lib/hud")
 local Lobby = require("__bed-wars__/scenarios/bedwars/lib/lobby")
+local AI = require("__bed-wars__/scenarios/bedwars/lib/ai")
 local M = {}
 
 local function bed_key_of_name(name)
@@ -70,7 +71,9 @@ function M.on_entity_died(e)
   local breaker = "an attack"
   local cause = e.cause
   if cause and cause.valid then
-    if cause.type == "character" and cause.player then
+    if AI.is_character(cause) then
+      breaker = Config.AI_NAME
+    elseif cause.type == "character" and cause.player then
       breaker = cause.player.name
     else
       breaker = "[entity=" .. cause.name .. "]"
@@ -87,7 +90,9 @@ function M.on_player_died(e)
   local cause = e.cause
   local killer = "the void"
   if cause and cause.valid then
-    if cause.type == "character" and cause.player then
+    if AI.is_character(cause) then
+      killer = Config.AI_NAME
+    elseif cause.type == "character" and cause.player then
       killer = cause.player.name
     else
       killer = "[entity=" .. cause.name .. "]"
@@ -121,7 +126,9 @@ function M.check_victory()
   local contenders = 0
   for _, key in pairs(Config.TEAM_ORDER) do
     local team = storage.bw.teams[key]
-    if #team.players > 0 then
+    local ai_contender = storage.bw.ai and storage.bw.ai.enabled
+      and storage.bw.ai.team == key
+    if #team.players > 0 or ai_contender then
       contenders = contenders + 1
       local alive = false
       if not team.bed_alive then
@@ -135,6 +142,11 @@ function M.check_victory()
             alive = true
             break
           end
+        end
+        if ai_contender and not storage.bw.ai.eliminated
+          and ((storage.bw.ai.character and storage.bw.ai.character.valid)
+            or storage.bw.ai.respawn_tick) then
+          alive = true
         end
       else
         alive = true
@@ -263,6 +275,7 @@ function M.rematch()
     if player.gui.center.bw_end then player.gui.center.bw_end.destroy() end
     if player.character then Teams.make_spectator(player) end
   end
+  AI.reset()
   Hud.destroy_all()
 
   for _, ent in pairs(surface.find_entities_filtered{}) do

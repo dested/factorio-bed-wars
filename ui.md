@@ -32,6 +32,13 @@ Last updated: 2026-07-20
 - GUIs are rebuilt, not patched: `show()`/`build()` destroy any existing frame
   first; obsolete frames are destroyed on state change (lobby → start,
   end → rematch).
+- Lobby exposes two host-only selectors: **Game pace**
+  (Chill/Classic/Brutal) and **Computer opponent**
+  (Off/Rookie/Rival/Master), each with a description below it. The roster
+  previews `Rivet [AI]` on the empty human team.
+- During a single-player match, the HUD ends with
+  `vs Rivet [difficulty]` in Rivet's team color and appends `- OUT` after
+  permanent elimination.
 
 ## Don'ts
 

@@ -114,6 +114,16 @@ function M.tick()
           end
         end
       end
+      local ai = storage.bw.ai
+      if ai and ai.enabled and ai.team == key
+        and ai.character and ai.character.valid then
+        local cp = ai.character.position
+        local dx = cp.x - bp.x
+        local dy = cp.y - bp.y
+        if dx * dx + dy * dy <= r2 then
+          ai.character.health = ai.character.health + Config.HEAL_PER_TICK30
+        end
+      end
     end
   end
 end

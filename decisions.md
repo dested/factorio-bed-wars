@@ -1,5 +1,22 @@
 # Decisions
 
+## 2026-07-20 — Fair character AI, separate from match pace
+**Why:** single-player should feel like Bed Wars against another player, not a
+wave-defense substitute. Rivet is therefore a hostile `character` that walks,
+collects visible drops, pays the same configured prices, equips inventory,
+bridges one tile at a time, contests mid, resupplies, defends, attacks, and
+uses the normal bed/respawn lifecycle. Rookie/Rival/Master tune reaction,
+accuracy, aggression, retreating, upgrades, and planning; Chill/Classic/Brutal
+remain shared economy/clock settings.
+**Engine constraint:** script-owned characters accept walking and shooting
+state, but only walking advances without a player controller. Weapon resolution
+is deterministic in `ai.lua` using the equipped gun/ammo, vanilla-like cadence,
+magazine consumption, aim error, damage resistance, force upgrades, visual
+impacts, and normal kill attribution.
+**Rejected:** invisible resource grants (unfair), a renamed biter/unit
+(cannot shop/build/use the Bed Wars economy), and a stationary turret opponent
+(does not resemble a player).
+
 ## 2026-07-20 — Mod-that-ships-a-scenario (not a plain scenario, not a soft-mod)
 **Why:** custom prototypes (beds, currencies, wall tiers, markets) require a
 mod's data stage; the game mode itself is naturally a scenario. One artifact

@@ -126,6 +126,85 @@ Config.DIFFICULTY = {
 Config.DIFFICULTY_ORDER = { "chill", "classic", "brutal" }
 Config.DIFFICULTY_LABELS = { chill = "Chill", classic = "Classic", brutal = "Brutal" }
 
+-- Single-player opponent. The match difficulty above controls the shared
+-- economy and clock; this separate setting controls how convincingly Rivet
+-- thinks and fights. Rivet still gathers visible drops and pays normal shop
+-- prices at every level -- higher levels improve decisions rather than income.
+Config.AI_NAME = "Rivet"
+Config.AI_TICK = 1 -- walking/shooting input lasts one tick, so the brain must drive every tick
+Config.AI_PICKUP_TICKS = 6
+Config.AI_PICKUP_RADIUS = 2.6
+Config.AI_SHOP_REACH = 3.5
+Config.AI_HEAL_AMOUNT = 80
+Config.AI_BRIDGE_TILE = "landfill"
+Config.AI_BRIDGE_LANES = { -2, 2 }
+Config.AI_PHASE_TICKS = 240
+Config.AI_RESUPPLY_TICKS = 12 * 60
+Config.AI_POST_RESUPPLY_MID_TICKS = 3 * 60
+Config.AI_CHARACTER_MAX_HEALTH = 250
+Config.AI_GUN_RANGE = 17
+Config.AI_AIM_HIT_RADIUS = 0.9
+Config.AI_MAGAZINE_ROUNDS = 10
+Config.AI_OBSTACLE_PROBE_RADIUS = 1.4
+Config.AI_BRIDGE_LOOKAHEAD = 0.95
+Config.AI_ROUTE_INSET = 3
+Config.AI_BED_APPROACH_MARGIN = 0.6
+Config.AI_WEAPON_COOLDOWN = {
+  pistol = 15, ["submachine-gun"] = 6, shotgun = 36, ["combat-shotgun"] = 20,
+}
+Config.AI_AMMO_DAMAGE = {
+  ["firearm-magazine"] = 5, ["piercing-rounds-magazine"] = 8,
+  ["shotgun-shell"] = 32, ["piercing-shotgun-shell"] = 48,
+}
+Config.AI_DIFFICULTY_ORDER = { "off", "rookie", "rival", "master" }
+Config.AI_DIFFICULTY_LABELS = {
+  off = "Off (multiplayer)",
+  rookie = "Rookie",
+  rival = "Rival",
+  master = "Master",
+}
+Config.AI_DIFFICULTY_DESCRIPTIONS = {
+  off = "No computer opponent. Use this when a human is on each team.",
+  rookie = "Patient attacks, readable aim, modest upgrades, and slower bed breaks.",
+  rival = "Balanced tactics: shops, defends, strafes, retreats, and pressures mid.",
+  master = "Fast reactions, sharp aim, emerald resupply, strong upgrades, relentless defense.",
+}
+Config.AI_DIFFICULTY = {
+  rookie = {
+    reaction_ticks = 45, aim_error = 2.8, burst_on = 24, burst_off = 42,
+    aggression_ticks = 150 * 60, regear_ticks = 45 * 60,
+    bridge_stock = 84, ammo_stock = 30, defend_radius = 17,
+    retreat_health = 0.42, strafe = false, strafe_ticks = 180,
+    mid_loiter_ticks = 12 * 60,
+    emerald_resupply = false, mine_interval = 18, bed_mine_damage = 38,
+    melee_interval = 40, melee_damage = 8, preferred_range = 9,
+    upgrade_priority = { "boots" },
+  },
+  rival = {
+    reaction_ticks = 18, aim_error = 1.0, burst_on = 42, burst_off = 18,
+    aggression_ticks = 95 * 60, regear_ticks = 28 * 60,
+    bridge_stock = 94, ammo_stock = 50, defend_radius = 25,
+    retreat_health = 0.30, strafe = true, strafe_ticks = 150,
+    mid_loiter_ticks = 22 * 60,
+    emerald_resupply = false, mine_interval = 12, bed_mine_damage = 58,
+    melee_interval = 28, melee_damage = 11, preferred_range = 10,
+    upgrade_priority = { "fortress", "boots", "forge-1", "drill", "sharp-1" },
+  },
+  master = {
+    reaction_ticks = 6, aim_error = 0.22, burst_on = 72, burst_off = 8,
+    aggression_ticks = 70 * 60, regear_ticks = 18 * 60,
+    bridge_stock = 104, ammo_stock = 70, defend_radius = 34,
+    retreat_health = 0.22, strafe = true, strafe_ticks = 90,
+    mid_loiter_ticks = 42 * 60,
+    emerald_resupply = true, mine_interval = 9, bed_mine_damage = 82,
+    melee_interval = 20, melee_damage = 14, preferred_range = 11,
+    upgrade_priority = {
+      "fortress", "sharp-1", "boots", "forge-1", "drill",
+      "forge-2", "sharp-2", "heal",
+    },
+  },
+}
+
 Config.ESCALATION = { -- minutes from start, in order; handled once each
   { min = 12, event = "emerald-2" },
   { min = 24, event = "emerald-3" },

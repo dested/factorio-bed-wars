@@ -23,6 +23,7 @@ function M.build(player)
   local clock = hud.add{ type = "label", name = "bw_clock", caption = "0:00" }
   clock.style.font = "default-bold"
   hud.add{ type = "label", name = "bw_event" }
+  hud.add{ type = "label", name = "bw_ai" }
 end
 
 -- Soonest future scheduled event (escalations + sudden death), or nil.
@@ -87,6 +88,16 @@ function M.update_all()
       else
         hud.bw_clock.caption = "-"
         hud.bw_event.caption = ""
+      end
+
+      local ai = storage.bw.ai
+      if ai and ai.enabled then
+        local status = ai.eliminated and " - OUT" or ""
+        hud.bw_ai.caption = "vs " .. Config.AI_NAME .. " ["
+          .. Config.AI_DIFFICULTY_LABELS[ai.difficulty] .. "]" .. status
+        hud.bw_ai.style.font_color = Config.TEAMS[ai.team].color
+      else
+        hud.bw_ai.caption = ""
       end
     end
   end

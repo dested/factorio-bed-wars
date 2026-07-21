@@ -51,6 +51,25 @@ Pass = 11 PNGs in `mod/graphics/` + `mod/thumbnail.png`, all >200 bytes.
 ## [heavy — ask first] Real playtest
 
 Launch Factorio (mod auto-detected via junction) → New Game → Bed Wars →
-bedwars. Solo smoke: START works with one player; buy from both markets, break
-the enemy bed (needs walking there), confirm victory GUI + REMATCH resets to
-lobby. Full test needs two players (LAN/second instance).
+bedwars. Single-player smoke: leave Rivet on Rival, START with one player,
+confirm Rivet appears on the empty team, visibly collects/shopping cycles,
+builds toward mid, fights, and follows bed-dependent respawning. Break Rivet's
+bed and eliminate it; confirm victory GUI + REMATCH returns to the lobby with
+the selected AI difficulty preserved. Human multiplayer: set Computer opponent
+to Off and use LAN/second instance.
+
+## [automated integration — completed for v1.0.2]
+
+An ignored, isolated test mod loaded the production scenario control in a
+headless server, selected Master, accelerated game speed, and supplied only a
+long-match-equivalent inventory. Runtime assertions were queried over local
+RCON. Passed on Factorio 2.1.11:
+
+- character spawned, walked, and collected items;
+- 74+ landfill tiles built across both water gaps;
+- mid collection and emerald resupply completed;
+- equipped SMG and magazine state used to shoot through a hostile wall;
+- enemy bed destroyed with correct force attribution;
+- death with a live bed entered respawning and created a second character;
+- death after bed destruction set eliminated with no respawn;
+- no `Error`, `Exception`, or stack traceback in the final server log.

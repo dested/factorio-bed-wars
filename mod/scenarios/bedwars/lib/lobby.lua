@@ -5,6 +5,7 @@ local Teams = require("__bed-wars__/scenarios/bedwars/lib/teams")
 local Shop = require("__bed-wars__/scenarios/bedwars/lib/shop")
 local Upgrades = require("__bed-wars__/scenarios/bedwars/lib/upgrades")
 local Hud = require("__bed-wars__/scenarios/bedwars/lib/hud")
+local AI = require("__bed-wars__/scenarios/bedwars/lib/ai")
 local M = {}
 
 local DIFF_DESC = {
@@ -24,6 +25,9 @@ local function roster(key)
   for _, idx in pairs(storage.bw.teams[key].players) do
     local p = game.get_player(idx)
     if p and p.valid then table.insert(names, p.name) end
+  end
+  if AI.planned_team() == key then
+    table.insert(names, Config.AI_NAME .. " [AI]")
   end
   if #names == 0 then return "waiting..." end
   return table.concat(names, ", ")
@@ -47,7 +51,7 @@ function M.show(player)
   local is_host = player.index == storage.bw.host
 
   local diff_flow = frame.add{ type = "flow", direction = "horizontal" }
-  diff_flow.add{ type = "label", caption = "Difficulty:" }
+  diff_flow.add{ type = "label", caption = "Game pace:" }
   local items = {}
   local selected = 1
   for i, key in pairs(Config.DIFFICULTY_ORDER) do
@@ -61,10 +65,27 @@ function M.show(player)
 
   frame.add{ type = "label", name = "bw_lobby_diff_desc", caption = DIFF_DESC[storage.bw.difficulty] }
 
+  local ai_flow = frame.add{ type = "flow", direction = "horizontal" }
+  ai_flow.add{ type = "label", caption = "Computer opponent:" }
+  local ai_items = {}
+  local ai_selected = 1
+  for i, key in pairs(Config.AI_DIFFICULTY_ORDER) do
+    ai_items[i] = Config.AI_DIFFICULTY_LABELS[key]
+    if key == storage.bw.ai.difficulty then ai_selected = i end
+  end
+  ai_flow.add{
+    type = "drop-down", name = "bw_lobby_ai_difficulty",
+    items = ai_items, selected_index = ai_selected, enabled = is_host,
+  }
+  frame.add{
+    type = "label", name = "bw_lobby_ai_desc",
+    caption = Config.AI_DIFFICULTY_DESCRIPTIONS[storage.bw.ai.difficulty],
+  }
+
   frame.add{
     type = "button", name = "bw_lobby_start", caption = "START GAME",
     style = "confirm_button", enabled = is_host,
-    tooltip = "Host starts the game. Starting with one player is fine for testing.",
+    tooltip = "With one occupied team, Rivet takes the other side. Set the computer opponent to Off for human multiplayer.",
   }
 end
 
@@ -103,11 +124,16 @@ end
 
 function M.on_selection_changed(e)
   if not (e.element and e.element.valid) then return end
-  if e.element.name ~= "bw_lobby_difficulty" or e.player_index ~= storage.bw.host then return end
-  storage.bw.difficulty = Config.DIFFICULTY_ORDER[e.element.selected_index]
-  Shop.stock_markets()
-  for _, key in pairs(Config.TEAM_ORDER) do Upgrades.refresh_offers(key) end
-  M.show_all()
+  if e.player_index ~= storage.bw.host then return end
+  if e.element.name == "bw_lobby_difficulty" then
+    storage.bw.difficulty = Config.DIFFICULTY_ORDER[e.element.selected_index]
+    Shop.stock_markets()
+    for _, key in pairs(Config.TEAM_ORDER) do Upgrades.refresh_offers(key) end
+    M.show_all()
+  elseif e.element.name == "bw_lobby_ai_difficulty" then
+    storage.bw.ai.difficulty = Config.AI_DIFFICULTY_ORDER[e.element.selected_index]
+    M.show_all()
+  end
 end
 
 function M.start_game()
@@ -125,6 +151,7 @@ function M.start_game()
       end
     end
   end
+  AI.start()
   for _, player in pairs(game.connected_players) do
     Hud.build(player)
   end
